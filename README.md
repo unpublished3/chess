@@ -1,6 +1,6 @@
 # Chess
 
-Chess engine made using javascript
+Chess engine made using C++
 
 ## Todo
 - [ ] Board Representation
