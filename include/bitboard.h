@@ -1,5 +1,10 @@
-#include <cstdint>
+#ifndef BITBOARD_H
+#define BITBOARD_H
 
+#include <cstdint>
+#include <iostream>
+
+// Bitboard
 class CBoard {
     // Array of pieces defined in the order of the enum
     uint64_t pieceBB[14];
@@ -24,6 +29,12 @@ class CBoard {
         blackKing
     };
 
-    // Returns the board for a certain piece type 
+    // Returns the board for a certain piece type
     uint64_t getPieceSet(Piece pt) { return pieceBB[pt]; }
+
+    void print() {
+        std::cout << "A" << std::endl;
+    }
 };
+
+#endif
