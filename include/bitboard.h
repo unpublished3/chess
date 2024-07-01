@@ -2,22 +2,19 @@
 #define BITBOARD_H
 
 #include <cstdint>
-#include <cstdio>
 #include <iostream>
-#include <iterator>
 
 // Bitboard
 class CBoard {
     // Array of pieces defined in the order of the enum
-    uint64_t pieceBB[14];
-    uint64_t emptyBB = 0ULL;
-    uint64_t occupiedBB;
+    uint64_t pieceBB[16];
 
 #define get_bit(bitboard, square) ((bitboard >> square) & 1ULL)
 
   public:
     // Enumerate pieces
-    enum Piece {
+    enum Board {
+        empty,
         white,
         black,
         whitePawn,
@@ -31,7 +28,8 @@ class CBoard {
         blackKnight,
         blackBishop,
         blackQueen,
-        blackKing
+        blackKing,
+        occupied
     };
 
     // Enumerate squares
@@ -47,10 +45,10 @@ class CBoard {
     // clang-format -n
 
     // Returns the board for a certain piece type
-    uint64_t getPieceSet(Piece pt) { return pieceBB[pt]; }
+    uint64_t getPieceSet(Board board) { return pieceBB[board]; }
 
     // Print the bitboad for a specific piece
-    void print_bitboard() {
+    void print_bitboard(Board board) {
         std::cout << "\n  ---------------------------------\n";
 
         for (int rank = 0; rank < 8; rank++) {
@@ -63,7 +61,7 @@ class CBoard {
 
                 int square = rank * 8 + file;
                 // Print 1 if piece is in location else 0
-                std::cout << (get_bit(occupiedBB, square)) << " | ";
+                std::cout << (get_bit(pieceBB[board], square)) << " | ";
             }
             std::cout << "\n  ---------------------------------\n";
         }
@@ -71,7 +69,7 @@ class CBoard {
         // Print ranks
         std::cout << "    a   b   c   d   e   f   g   h";
 
-        std::cout << "\n\n    Bitboard: " << occupiedBB << "\n\n";
+        std::cout << "\n\n    Bitboard: " << pieceBB[board] << "\n\n";
     }
 };
 

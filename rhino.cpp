@@ -2,7 +2,7 @@
 
 int main() {
     CBoard board;
-    board.print_bitboard();
+    board.print_bitboard(CBoard::white);
 
     return 0;
 }
