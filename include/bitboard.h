@@ -10,10 +10,6 @@ class CBoard {
     // Array of pieces defined in the order of the enum
     uint64_t pieceBB[16];
 
-    int get_bit(uint64_t bitboard, int square) {
-        return (bitboard >> square) & 1ULL;
-    }
-
   public:
     // Enumerate pieces
     enum Board {
@@ -83,11 +79,21 @@ class CBoard {
         }
     }
 
+    // Get bit at specific positon for a bitboard
+    int get_bit(uint64_t bitboard, int square) {
+        return (bitboard >> square) & 1ULL;
+    }
+
     // Set a specific bit for a bitboard
     void set_bit(Board board, int square) {
         pieceBB[board] |= (1ULL << square);
     }
 
+    // Pop a specific bit for a bitboard
+    void pop_bit(Board board, int square)
+    {
+        pieceBB[board] &= ~(1ULL << square);
+    }
 };
 
 #endif
