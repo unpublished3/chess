@@ -1,6 +1,7 @@
 #ifndef BITBOARD_H
 #define BITBOARD_H
 
+#include <cmath>
 #include <cstdint>
 #include <iostream>
 
@@ -9,7 +10,9 @@ class CBoard {
     // Array of pieces defined in the order of the enum
     uint64_t pieceBB[16];
 
-#define get_bit(bitboard, square) ((bitboard >> square) & 1ULL)
+    int get_bit(uint64_t bitboard, int square) {
+        return (bitboard >> square) & 1ULL;
+    }
 
   public:
     // Enumerate pieces
@@ -71,6 +74,20 @@ class CBoard {
 
         std::cout << "\n\n    Bitboard: " << pieceBB[board] << "\n\n";
     }
+
+    // Set all bitboards to 0ULL
+    void unset() {
+        for (uint64_t i = 0; i < 16; i++)
+        {   
+            pieceBB[i] = 0;
+        }
+    }
+
+    // Set a specific bit for a bitboard
+    void set_bit(Board board, int square) {
+        pieceBB[board] |= (1ULL << square);
+    }
+
 };
 
 #endif
