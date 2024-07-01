@@ -1,8 +1,6 @@
-// #include <iostream>
 #include "./include/bitboard.h"
 
-int main()
-{
+int main() {
     CBoard board;
     board.print_bitboard();
 
