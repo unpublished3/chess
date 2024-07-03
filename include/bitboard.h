@@ -19,23 +19,35 @@ class CBoard {
      ****************************************************************/
 
     // Pawn attack table
-    // uint64_t mask_pawn_attacks(int side, int square) {
-    //     // Attacks bitboard
-    //     uint64_t attacks = 0ULL;
+    uint64_t mask_pawn_attacks(int side, int square) {
+        // Attacks bitboard
+        uint64_t attacks = 0ULL;
 
-    //     print_bitboard(whitePawnsB);
+        // Single piece bitboard
+        uint64_t bitboard = 0ULL;
+        set_bit(bitboard, square);
 
-    //     // White pawns
-    //     if (!side) {
+        print_bitboard(bitboard);
 
-    //     }
-    //     // Black Pawns
-    //     else {
-    //     }
-    // }
+        // White pawns
+        if (!side) {
+            attacks |= (bitboard >> 7);
+            attacks |= (bitboard >> 9);
+        }
+        // Black Pawns
+        else {
+            attacks |= (bitboard << 7);
+            attacks |= (bitboard << 9);
+        }
+
+        return attacks;
+    }
 
   public:
-    CBoard() { initialize(); }
+    CBoard() {
+        initialize();
+        print_bitboard(mask_pawn_attacks(black, e4));
+    }
 
     /*****************************************************************
      =================================================================
@@ -162,13 +174,13 @@ class CBoard {
     }
 
     // Set a specific bit for a bitboard
-    void set_bit(Board board, int square) {
-        pieceBB[board] |= (1ULL << square);
+    void set_bit(uint64_t &bitboard, int square) {
+        bitboard |= (1ULL << square);
     }
 
     // Pop a specific bit for a bitboard
-    void pop_bit(Board board, int square) {
-        pieceBB[board] &= ~(1ULL << square);
+    void pop_bit(uint64_t &bitboard, int square) {
+        bitboard &= ~(1ULL << square);
     }
 };
 
