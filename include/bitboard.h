@@ -13,8 +13,13 @@ class CBoard {
     uint64_t attackTable[12][2][64];
 
     // Values where all bits are set except for specific positions
+    // For generating pawn moves
     const uint64_t set_except_a_file = 18374403900871474942ULL;
     const uint64_t set_except_h_file = 9187201950435737471ULL;
+
+    // For knight moves
+    const uint64_t set_except_gh_file = 4557430888798830399ULL;
+    const uint64_t set_except_ab_file = 18229723555195321596ULL;
 
     /****************************************************************
      ================================================================
@@ -48,11 +53,7 @@ class CBoard {
     }
 
   public:
-    CBoard() {
-        initialize();
-        print_bitboard(mask_pawn_attacks(black, h4));
-
-    }
+    CBoard() { initialize(); }
 
     /*****************************************************************
      =================================================================
