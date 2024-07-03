@@ -12,6 +12,10 @@ class CBoard {
     uint64_t pieceBB[16];
     uint64_t attackTable[12][2][64];
 
+    // Values where all bits are set except for specific positions
+    const uint64_t set_except_a_file = 18374403900871474942ULL;
+    const uint64_t set_except_h_file = 9187201950435737471ULL;
+
     /****************************************************************
      ================================================================
                                 Attacks
@@ -31,13 +35,13 @@ class CBoard {
 
         // White pawns
         if (!side) {
-            attacks |= (bitboard >> 7);
-            attacks |= (bitboard >> 9);
+            attacks |= ((bitboard >> 7) & set_except_a_file);
+            attacks |= ((bitboard >> 9) & set_except_h_file);
         }
         // Black Pawns
         else {
-            attacks |= (bitboard << 7);
-            attacks |= (bitboard << 9);
+            attacks |= ((bitboard << 7) & set_except_h_file);
+            attacks |= ((bitboard << 9) & set_except_a_file);
         }
 
         return attacks;
@@ -46,7 +50,8 @@ class CBoard {
   public:
     CBoard() {
         initialize();
-        print_bitboard(mask_pawn_attacks(black, e4));
+        print_bitboard(mask_pawn_attacks(black, h4));
+
     }
 
     /*****************************************************************
