@@ -11,22 +11,24 @@ class CBoard {
     uint64_t pieceBB[16];
 
   public:
+    CBoard() { initialize(); }
+
     // Enumerate pieces
     enum Board {
         empty,
         white,
         black,
-        whitePawn,
-        whiteRook,
-        whiteKnight,
-        whiteBishop,
-        whiteQueen,
+        whitePawns,
+        whiteRooks,
+        whiteKnights,
+        whiteBishops,
+        whiteQueens,
         whiteKing,
-        blackPawn,
-        blackRook,
-        blackKnight,
-        blackBishop,
-        blackQueen,
+        blackPawns,
+        blackRooks,
+        blackKnights,
+        blackBishops,
+        blackQueens,
         blackKing,
         occupied
     };
@@ -71,12 +73,41 @@ class CBoard {
         std::cout << "\n\n    Bitboard: " << pieceBB[board] << "\n\n";
     }
 
-    // Set all bitboards to 0ULL
-    void unset() {
-        for (uint64_t i = 0; i < 16; i++)
-        {   
-            pieceBB[i] = 0;
-        }
+    // Set initial position for all the pieces on the board
+    void initialize() {
+        // Pawns
+        pieceBB[whitePawns] = 0x00FF000000000000ULL;
+        pieceBB[blackPawns] = 0x000000000000FF00ULL;
+
+        // Rooks
+        pieceBB[whiteRooks] = 0x8100000000000000ULL;
+        pieceBB[blackRooks] = 0x0000000000000081ULL;
+
+        // Knigts
+        pieceBB[whiteKnights] = 0x4200000000000000ULL;
+        pieceBB[blackKnights] = 0x0000000000000042ULL;
+
+        // // Bishops
+        pieceBB[whiteBishops] = 0x2400000000000000ULL;
+        pieceBB[blackBishops] = 0x0000000000000024ULL;
+
+        // // Queens
+        pieceBB[whiteQueens] = 0x0800000000000000ULL;
+        pieceBB[blackQueens] = 0x0000000000000008ULL;
+
+        // // King
+        pieceBB[whiteKing] = 0x1000000000000000ULL;
+        pieceBB[blackKing] = 0x0000000000000010ULL;
+
+        // // Combined
+        pieceBB[white] = pieceBB[whitePawns] | pieceBB[whiteRooks] |
+                         pieceBB[whiteKnights] | pieceBB[whiteBishops] |
+                         pieceBB[whiteQueens] | pieceBB[whiteKing];
+
+        pieceBB[black] = pieceBB[blackPawns] | pieceBB[blackRooks] |
+                         pieceBB[blackKnights] | pieceBB[blackBishops] |
+                         pieceBB[blackQueens] | pieceBB[blackKing];;
+        pieceBB[occupied] = pieceBB[white] | pieceBB[black];
     }
 
     // Get bit at specific positon for a bitboard
@@ -90,8 +121,7 @@ class CBoard {
     }
 
     // Pop a specific bit for a bitboard
-    void pop_bit(Board board, int square)
-    {
+    void pop_bit(Board board, int square) {
         pieceBB[board] &= ~(1ULL << square);
     }
 };
