@@ -13,6 +13,12 @@ class CBoard {
   public:
     CBoard() { initialize(); }
 
+    /*****************************************************************
+     =================================================================
+                                    Enums
+     =================================================================
+     *****************************************************************/
+
     // Enumerate pieces
     enum Board {
         empty,
@@ -45,6 +51,13 @@ class CBoard {
            a1, b1, c1, d1, e1, f1, g1, h1 };
     // clang-format on
 
+    /****************************************************************
+     ================================================================
+                                Board
+     ================================================================
+     ****************************************************************/
+
+
     // Returns the board for a certain piece type
     uint64_t getPieceSet(Board board) { return pieceBB[board]; }
 
@@ -72,6 +85,12 @@ class CBoard {
 
         std::cout << "\n\n    Bitboard: " << pieceBB[board] << "\n\n";
     }
+
+    /****************************************************************
+     ================================================================
+                            Bit Manipulation
+     ================================================================
+     ****************************************************************/
 
     // Set initial position for all the pieces on the board
     void initialize() {
@@ -106,7 +125,8 @@ class CBoard {
 
         pieceBB[black] = pieceBB[blackPawns] | pieceBB[blackRooks] |
                          pieceBB[blackKnights] | pieceBB[blackBishops] |
-                         pieceBB[blackQueens] | pieceBB[blackKing];;
+                         pieceBB[blackQueens] | pieceBB[blackKing];
+        ;
         pieceBB[occupied] = pieceBB[white] | pieceBB[black];
     }
 
@@ -124,6 +144,13 @@ class CBoard {
     void pop_bit(Board board, int square) {
         pieceBB[board] &= ~(1ULL << square);
     }
+
+    /****************************************************************
+     ================================================================
+                                Attacks
+     ================================================================
+     ****************************************************************/
+
 };
 
 #endif
