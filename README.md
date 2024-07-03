@@ -3,7 +3,7 @@
 Chess engine made using C++
 
 ## Todo
-- [ ] Board Representation
+- [x] Board Representation
 - [ ] Move Generation
 - [ ] GUI
 - [ ] Negamax
