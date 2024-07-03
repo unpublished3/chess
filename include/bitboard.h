@@ -4,11 +4,35 @@
 #include <cmath>
 #include <cstdint>
 #include <iostream>
+#include <sys/types.h>
 
 // Bitboard
 class CBoard {
     // Array of pieces defined in the order of the enum
     uint64_t pieceBB[16];
+    uint64_t attackTable[12][2][64];
+
+    /****************************************************************
+     ================================================================
+                                Attacks
+     ================================================================
+     ****************************************************************/
+
+    // Pawn attack table
+    // uint64_t mask_pawn_attacks(int side, int square) {
+    //     // Attacks bitboard
+    //     uint64_t attacks = 0ULL;
+
+    //     print_bitboard(whitePawnsB);
+
+    //     // White pawns
+    //     if (!side) {
+
+    //     }
+    //     // Black Pawns
+    //     else {
+    //     }
+    // }
 
   public:
     CBoard() { initialize(); }
@@ -21,22 +45,22 @@ class CBoard {
 
     // Enumerate pieces
     enum Board {
-        empty,
-        white,
-        black,
-        whitePawns,
-        whiteRooks,
-        whiteKnights,
-        whiteBishops,
-        whiteQueens,
-        whiteKing,
-        blackPawns,
-        blackRooks,
-        blackKnights,
-        blackBishops,
-        blackQueens,
-        blackKing,
-        occupied
+        emptyB,
+        whiteB,
+        blackB,
+        whitePawnsB,
+        whiteRooksB,
+        whiteKnightsB,
+        whiteBishopsB,
+        whiteQueensB,
+        whiteKingB,
+        blackPawnsB,
+        blackRooksB,
+        blackKnightsB,
+        blackBishopsB,
+        blackQueensB,
+        blackKingB,
+        occupiedB
     };
 
     // Enumerate squares
@@ -51,18 +75,20 @@ class CBoard {
            a1, b1, c1, d1, e1, f1, g1, h1 };
     // clang-format on
 
+    // Enumerate colors
+    enum { white, black };
+
     /****************************************************************
      ================================================================
                                 Board
      ================================================================
      ****************************************************************/
 
-
     // Returns the board for a certain piece type
     uint64_t getPieceSet(Board board) { return pieceBB[board]; }
 
     // Print the bitboad for a specific piece
-    void print_bitboard(Board board) {
+    void print_bitboard(uint64_t board) {
         std::cout << "\n  ---------------------------------\n";
 
         for (int rank = 0; rank < 8; rank++) {
@@ -75,7 +101,7 @@ class CBoard {
 
                 int square = rank * 8 + file;
                 // Print 1 if piece is in location else 0
-                std::cout << (get_bit(pieceBB[board], square)) << " | ";
+                std::cout << (get_bit(board, square)) << " | ";
             }
             std::cout << "\n  ---------------------------------\n";
         }
@@ -83,7 +109,7 @@ class CBoard {
         // Print ranks
         std::cout << "    a   b   c   d   e   f   g   h";
 
-        std::cout << "\n\n    Bitboard: " << pieceBB[board] << "\n\n";
+        std::cout << "\n\n    Bitboard: " << board << "\n\n";
     }
 
     /****************************************************************
@@ -95,39 +121,39 @@ class CBoard {
     // Set initial position for all the pieces on the board
     void initialize() {
         // Pawns
-        pieceBB[whitePawns] = 0x00FF000000000000ULL;
-        pieceBB[blackPawns] = 0x000000000000FF00ULL;
+        pieceBB[whitePawnsB] = 0x00FF000000000000ULL;
+        pieceBB[blackPawnsB] = 0x000000000000FF00ULL;
 
         // Rooks
-        pieceBB[whiteRooks] = 0x8100000000000000ULL;
-        pieceBB[blackRooks] = 0x0000000000000081ULL;
+        pieceBB[whiteRooksB] = 0x8100000000000000ULL;
+        pieceBB[blackRooksB] = 0x0000000000000081ULL;
 
         // Knigts
-        pieceBB[whiteKnights] = 0x4200000000000000ULL;
-        pieceBB[blackKnights] = 0x0000000000000042ULL;
+        pieceBB[whiteKnightsB] = 0x4200000000000000ULL;
+        pieceBB[blackKnightsB] = 0x0000000000000042ULL;
 
         // // Bishops
-        pieceBB[whiteBishops] = 0x2400000000000000ULL;
-        pieceBB[blackBishops] = 0x0000000000000024ULL;
+        pieceBB[whiteBishopsB] = 0x2400000000000000ULL;
+        pieceBB[blackBishopsB] = 0x0000000000000024ULL;
 
         // // Queens
-        pieceBB[whiteQueens] = 0x0800000000000000ULL;
-        pieceBB[blackQueens] = 0x0000000000000008ULL;
+        pieceBB[whiteQueensB] = 0x0800000000000000ULL;
+        pieceBB[blackQueensB] = 0x0000000000000008ULL;
 
         // // King
-        pieceBB[whiteKing] = 0x1000000000000000ULL;
-        pieceBB[blackKing] = 0x0000000000000010ULL;
+        pieceBB[whiteKingB] = 0x1000000000000000ULL;
+        pieceBB[blackKingB] = 0x0000000000000010ULL;
 
         // // Combined
-        pieceBB[white] = pieceBB[whitePawns] | pieceBB[whiteRooks] |
-                         pieceBB[whiteKnights] | pieceBB[whiteBishops] |
-                         pieceBB[whiteQueens] | pieceBB[whiteKing];
+        pieceBB[whiteB] = pieceBB[whitePawnsB] | pieceBB[whiteRooksB] |
+                          pieceBB[whiteKnightsB] | pieceBB[whiteBishopsB] |
+                          pieceBB[whiteQueensB] | pieceBB[whiteKingB];
 
-        pieceBB[black] = pieceBB[blackPawns] | pieceBB[blackRooks] |
-                         pieceBB[blackKnights] | pieceBB[blackBishops] |
-                         pieceBB[blackQueens] | pieceBB[blackKing];
+        pieceBB[blackB] = pieceBB[blackPawnsB] | pieceBB[blackRooksB] |
+                          pieceBB[blackKnightsB] | pieceBB[blackBishopsB] |
+                          pieceBB[blackQueensB] | pieceBB[blackKingB];
         ;
-        pieceBB[occupied] = pieceBB[white] | pieceBB[black];
+        pieceBB[occupiedB] = pieceBB[whiteB] | pieceBB[blackB];
     }
 
     // Get bit at specific positon for a bitboard
@@ -144,13 +170,6 @@ class CBoard {
     void pop_bit(Board board, int square) {
         pieceBB[board] &= ~(1ULL << square);
     }
-
-    /****************************************************************
-     ================================================================
-                                Attacks
-     ================================================================
-     ****************************************************************/
-
 };
 
 #endif
