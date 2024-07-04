@@ -2,6 +2,6 @@
 
 int main() {
     CBoard board;
-
+    
     return 0;
 }

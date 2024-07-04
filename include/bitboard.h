@@ -10,7 +10,7 @@
 class CBoard {
     // Array of pieces defined in the order of the enum
     uint64_t pieceBB[16];
-    uint64_t attackTable[12][64];
+    uint64_t attackTable[8][64];
 
     // Values where all bits are set except for specific positions
     // For generating pawn moves
@@ -52,8 +52,8 @@ class CBoard {
 
     void init_pawn_attacks() {
         for (int square = 0; square < 64; square++) {
-            attackTable[whitePawnsB][square] = mask_pawn_attacks(white, square);
-            attackTable[blackPawnsB][square] = mask_pawn_attacks(black, square);
+            attackTable[whitePawnsA][square] = mask_pawn_attacks(white, square);
+            attackTable[blackPawnsA][square] = mask_pawn_attacks(black, square);
         }
     }
 
@@ -93,7 +93,7 @@ class CBoard {
 
     // Enumerate squares
     // clang-format off
-    enum { a8, b8, c8, d8, e8, f8, g8, h8,
+    enum Square { a8, b8, c8, d8, e8, f8, g8, h8,
            a7, b7, c7, d7, e7, f7, g7, h7,
            a6, b6, c6, d6, e6, f6, g6, h6,
            a5, b5, c5, d5, e5, f5, g5, h5,
@@ -104,7 +104,12 @@ class CBoard {
     // clang-format on
 
     // Enumerate colors
-    enum { white, black };
+    enum Color { white, black };
+
+    // Enumerate attacks
+    // clang-format off
+    enum Attack {whitePawnsA, blackPawnsA, whiteBishopsA, blackBishopsA, RooksA, KnightsA, QueensA, KingA};
+    // clang-format on
 
     /****************************************************************
      ================================================================
