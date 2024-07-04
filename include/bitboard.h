@@ -10,7 +10,7 @@
 class CBoard {
     // Array of pieces defined in the order of the enum
     uint64_t pieceBB[16];
-    uint64_t attackTable[12][2][64];
+    uint64_t attackTable[12][64];
 
     // Values where all bits are set except for specific positions
     // For generating pawn moves
@@ -36,8 +36,6 @@ class CBoard {
         uint64_t bitboard = 0ULL;
         set_bit(bitboard, square);
 
-        print_bitboard(bitboard);
-
         // White pawns
         if (!side) {
             attacks |= ((bitboard >> 7) & set_except_a_file);
@@ -52,8 +50,20 @@ class CBoard {
         return attacks;
     }
 
+    void init_pawn_attacks() {
+        for (int square = 0; square < 64; square++) {
+            attackTable[whitePawnsB][square] = mask_pawn_attacks(white, square);
+            attackTable[blackPawnsB][square] = mask_pawn_attacks(black, square);
+        }
+    }
+
   public:
-    CBoard() { initialize(); }
+    CBoard() {
+        // Setup initial postion of pieces
+        initialize();
+        // Initialize pawn attacks
+        init_pawn_attacks();
+    }
 
     /*****************************************************************
      =================================================================
