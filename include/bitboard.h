@@ -50,19 +50,54 @@ class CBoard {
         return attacks;
     }
 
-    void init_pawn_attacks() {
+    void init_leaper_attacks() {
         for (int square = 0; square < 64; square++) {
+            // Add masked attack for each square
+            // Pawns
             attackTable[whitePawnsA][square] = mask_pawn_attacks(white, square);
             attackTable[blackPawnsA][square] = mask_pawn_attacks(black, square);
+
+            // Knights
+            attackTable[knightsA][square] = mask_knight_attacks(square);
         }
+    }
+
+    // Knight attack table
+    uint64_t mask_knight_attacks(int square) {
+        // Attacks bitboard
+        uint64_t attacks = 0ULL;
+
+        // Single piece bitboard
+        uint64_t bitboard = 0ULL;
+        set_bit(bitboard, square);
+
+        // Move up from knight
+        // Two steps up
+        attacks |= ((bitboard >> 17) & set_except_h_file);
+        attacks |= ((bitboard >> 15) & set_except_a_file);
+
+        // One step up
+        attacks |= ((bitboard >> 10) & set_except_gh_file);
+        attacks |= ((bitboard >> 6) & set_except_ab_file);
+
+        // Move down from knight
+        // Two steps down
+        attacks |= ((bitboard << 17) & set_except_a_file);
+        attacks |= ((bitboard << 15) & set_except_h_file);
+
+        // One step down
+        attacks |= ((bitboard << 10) & set_except_ab_file);
+        attacks |= ((bitboard << 6) & set_except_gh_file);
+
+        return attacks;
     }
 
   public:
     CBoard() {
         // Setup initial postion of pieces
         initialize();
-        // Initialize pawn attacks
-        init_pawn_attacks();
+        // Initialize leaper attacks ie. pawns, knights
+        init_leaper_attacks();
     }
 
     /*****************************************************************
@@ -108,7 +143,7 @@ class CBoard {
 
     // Enumerate attacks
     // clang-format off
-    enum Attack {whitePawnsA, blackPawnsA, whiteBishopsA, blackBishopsA, RooksA, KnightsA, QueensA, KingA};
+    enum Attack {whitePawnsA, blackPawnsA, whiteBishopsA, blackBishopsA, rooksA, knightsA, queensA, kingA};
     // clang-format on
 
     /****************************************************************
