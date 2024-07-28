@@ -50,18 +50,6 @@ class CBoard {
         return attacks;
     }
 
-    void init_leaper_attacks() {
-        for (int square = 0; square < 64; square++) {
-            // Add masked attack for each square
-            // Pawns
-            attackTable[whitePawnsA][square] = mask_pawn_attacks(white, square);
-            attackTable[blackPawnsA][square] = mask_pawn_attacks(black, square);
-
-            // Knights
-            attackTable[knightsA][square] = mask_knight_attacks(square);
-        }
-    }
-
     // Knight attack table
     uint64_t mask_knight_attacks(int square) {
         // Attacks bitboard
@@ -92,12 +80,57 @@ class CBoard {
         return attacks;
     }
 
+    // King attack tables
+    uint64_t mask_king_attacks(int square) {
+        // Attacks bitboard
+        uint64_t attacks = 0ULL;
+
+        // Single piece bitboard
+        uint64_t bitboard = 0ULL;
+        set_bit(bitboard, square);
+
+        // Up and Down
+        attacks |= ((bitboard >> 8));
+        attacks |= ((bitboard << 8));
+
+        // Left and Right
+        attacks |= ((bitboard >> 1) & set_except_h_file);
+        attacks |= ((bitboard << 1) & set_except_a_file);
+
+        // Diagonals
+        attacks |= ((bitboard >> 9) & set_except_h_file);
+        attacks |= ((bitboard >> 7) & set_except_a_file);
+        attacks |= ((bitboard << 9) & set_except_a_file);
+        attacks |= ((bitboard << 7) & set_except_h_file);
+
+        return attacks;
+    }
+
+    void init_leaper_attacks() {
+        for (int square = 0; square < 64; square++) {
+            // Add masked attack for each square
+            // Pawns
+            attackTable[whitePawnsA][square] = mask_pawn_attacks(white, square);
+            attackTable[blackPawnsA][square] = mask_pawn_attacks(black, square);
+
+            // Knights
+            attackTable[knightsA][square] = mask_knight_attacks(square);
+
+            // King
+            attackTable[kingA][square] = mask_king_attacks(square);
+        }
+    }
+
   public:
     CBoard() {
         // Setup initial postion of pieces
         initialize();
         // Initialize leaper attacks ie. pawns, knights
         init_leaper_attacks();
+
+        for (int square = 0; square < 64; square++) {
+            print_bitboard(attackTable[kingA][square]);
+        }
     }
 
     /*****************************************************************
