@@ -207,21 +207,58 @@ class CBoard {
         int occupied_rank = square / 8, occupied_file = square % 8;
 
         // Right
-        for (file = occupied_file + 1; file <= 6; file++)
+        for (file = occupied_file + 1; file <= 6; file++) {
             attacks |= (1ULL << (occupied_rank * 8 + file));
+        }
+        // Left
+        for (file = occupied_file - 1; file >= 1; file--) {
+            attacks |= (1ULL << (occupied_rank * 8 + file));
+        }
+        // Up
+        for (rank = occupied_rank - 1; rank >= 1; rank--) {
+            attacks |= (1ULL << (rank * 8 + occupied_file));
+        }
+        // Down
+        for (rank = occupied_rank + 1; rank <= 6; rank++) {
+            attacks |= (1ULL << (rank * 8 + occupied_file));
+        }
+        return attacks;
+    }
+
+    uint64_t generate_rook_attacks(int square, uint64_t blockers) {
+        // Attacks bitboard;
+        uint64_t attacks = 0ULL;
+
+        // Ranks and files for attacking
+        int rank, file;
+        int occupied_rank = square / 8, occupied_file = square % 8;
+
+        // Right
+        for (file = occupied_file + 1; file <= 7; file++) {
+            attacks |= (1ULL << (occupied_rank * 8 + file));
+            if ((1ULL << (occupied_rank * 8 + file)) & blockers)
+                break;
+        }
 
         // Left
-        for (file = occupied_file - 1; file >= 1; file--)
+        for (file = occupied_file - 1; file >= 0; file--) {
             attacks |= (1ULL << (occupied_rank * 8 + file));
+            if ((1ULL << (occupied_rank * 8 + file)) & blockers)
+                break;
+        }
 
         // Up
-        for (rank = occupied_rank - 1; rank >= 1; rank--)
+        for (rank = occupied_rank - 1; rank >= 0; rank--) {
             attacks |= (1ULL << (rank * 8 + occupied_file));
-
+            if ((1ULL << (rank * 8 + occupied_file)) & blockers)
+                break;
+        }
         // Down
-        for (rank = occupied_rank + 1; rank <= 6; rank++)
+        for (rank = occupied_rank + 1; rank <= 7; rank++) {
             attacks |= (1ULL << (rank * 8 + occupied_file));
-
+            if ((1ULL << (rank * 8 + occupied_file)) & blockers)
+                break;
+        }
         return attacks;
     }
 
@@ -233,14 +270,15 @@ class CBoard {
         init_leaper_attacks();
 
         uint64_t blockers = 0ULL;
-        set_bit(blockers, b6);
-        set_bit(blockers, h8);
-        set_bit(blockers, e3);
-        // set_bit(blockers, b2);
+        set_bit(blockers, d1);
+        set_bit(blockers, d6);
+        set_bit(blockers, g4);
+        set_bit(blockers, c4);
+        set_bit(blockers, b2);
 
         for (int i = 0; i < 64; i++)
-            if (i != b6 && i != h8 && i != e3)
-                print_bitboard(generate_bishop_attacks(i, blockers));
+            if (i != d1 && i != d6 && i != g4 && i != c4 && i != b2)
+                print_bitboard(generate_rook_attacks(i, blockers));
 
         print_bitboard(blockers);
     }
