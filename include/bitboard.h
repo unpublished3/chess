@@ -156,6 +156,47 @@ class CBoard {
         return attacks;
     }
 
+    // Generate bishop attacks
+    uint64_t generate_bishop_attacks(int square, uint64_t blockers) {
+        // Attacks bitboard;
+        uint64_t attacks = 0ULL;
+
+        // Ranks and files for attacking
+        int rank, file;
+        int occupied_rank = square / 8, occupied_file = square % 8;
+
+        // Bottom Right
+        for (rank = occupied_rank + 1, file = occupied_file + 1;
+             rank <= 7 && file <= 7; rank++, file++) {
+            attacks |= (1ULL << (rank * 8 + file));
+            if ((1ULL << (rank * 8 + file)) & blockers)
+                break;
+        }
+
+        // Top left
+        for (rank = occupied_rank - 1, file = occupied_file - 1;
+             rank >= 0 && file >= 0; rank--, file--) {
+            attacks |= (1ULL << (rank * 8 + file));
+            if ((1ULL << (rank * 8 + file)) & blockers)
+                break;
+        }
+        // Bottom left
+        for (rank = occupied_rank + 1, file = occupied_file - 1;
+             rank <= 7 && file >= 0; rank++, file--) {
+            attacks |= (1ULL << (rank * 8 + file));
+            if ((1ULL << (rank * 8 + file)) & blockers)
+                break;
+        }
+        // Top right
+        for (rank = occupied_rank - 1, file = occupied_file + 1;
+             rank >= 0 && file <= 7; rank--, file++) {
+            attacks |= (1ULL << (rank * 8 + file));
+            if ((1ULL << (rank * 8 + file)) & blockers)
+                break;
+        }
+        return attacks;
+    }
+
     // Rook attack table
     uint64_t mask_rook_attacks(int square) {
         // Attacks bitboard;
@@ -191,8 +232,17 @@ class CBoard {
         // Initialize leaper attacks ie. pawns, knights
         init_leaper_attacks();
 
+        uint64_t blockers = 0ULL;
+        set_bit(blockers, b6);
+        set_bit(blockers, h8);
+        set_bit(blockers, e3);
+        // set_bit(blockers, b2);
+
         for (int i = 0; i < 64; i++)
-            print_bitboard(mask_rook_attacks(i));
+            if (i != b6 && i != h8 && i != e3)
+                print_bitboard(generate_bishop_attacks(i, blockers));
+
+        print_bitboard(blockers);
     }
 
     /*****************************************************************
