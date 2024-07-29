@@ -5,6 +5,7 @@
 #include <cmath>
 #include <cstdint>
 #include <iostream>
+#include <optional>
 #include <sys/types.h>
 
 // Bitboard
@@ -107,38 +108,6 @@ class CBoard {
         return attacks;
     }
 
-    // Bishop attack table
-    uint64_t mask_bishop_attacks(int square) {
-        // Attacks bitboard;
-        uint64_t attacks = 0ULL;
-
-        // Ranks and files for attacking
-        int rank, file;
-        int occpuied_rank = square / 8, occupied_file = square % 8;
-
-        // Bottom Right
-        for (rank = occpuied_rank + 1, file = occupied_file + 1;
-             rank <= 6 && file <= 6; rank++, file++)
-            attacks |= (1ULL << (rank * 8 + file));
-
-        // Top left
-        for (rank = occpuied_rank - 1, file = occupied_file - 1;
-             rank >= 1 && file >= 1; rank--, file--)
-            attacks |= (1ULL << (rank * 8 + file));
-
-        // Bottom left
-        for (rank = occpuied_rank + 1, file = occupied_file - 1;
-             rank <= 6 && file >= 1; rank++, file--)
-            attacks |= (1ULL << (rank * 8 + file));
-
-        // Top right
-        for (rank = occpuied_rank - 1, file = occupied_file + 1;
-             rank >= 1 && file <= 6; rank--, file++)
-            attacks |= (1ULL << (rank * 8 + file));
-
-        return attacks;
-    }
-
     // Initialize attakcs for king, knights and pawns
     void init_leaper_attacks() {
         for (int square = 0; square < 64; square++) {
@@ -155,6 +124,66 @@ class CBoard {
         }
     }
 
+    // Bishop attack table
+    uint64_t mask_bishop_attacks(int square) {
+        // Attacks bitboard;
+        uint64_t attacks = 0ULL;
+
+        // Ranks and files for attacking
+        int rank, file;
+        int occupied_rank = square / 8, occupied_file = square % 8;
+
+        // Bottom Right
+        for (rank = occupied_rank + 1, file = occupied_file + 1;
+             rank <= 6 && file <= 6; rank++, file++)
+            attacks |= (1ULL << (rank * 8 + file));
+
+        // Top left
+        for (rank = occupied_rank - 1, file = occupied_file - 1;
+             rank >= 1 && file >= 1; rank--, file--)
+            attacks |= (1ULL << (rank * 8 + file));
+
+        // Bottom left
+        for (rank = occupied_rank + 1, file = occupied_file - 1;
+             rank <= 6 && file >= 1; rank++, file--)
+            attacks |= (1ULL << (rank * 8 + file));
+
+        // Top right
+        for (rank = occupied_rank - 1, file = occupied_file + 1;
+             rank >= 1 && file <= 6; rank--, file++)
+            attacks |= (1ULL << (rank * 8 + file));
+
+        return attacks;
+    }
+
+    // Rook attack table
+    uint64_t mask_rook_attacks(int square) {
+        // Attacks bitboard;
+        uint64_t attacks = 0ULL;
+
+        // Ranks and files for attacking
+        int rank, file;
+        int occupied_rank = square / 8, occupied_file = square % 8;
+
+        // Right
+        for (file = occupied_file + 1; file <= 6; file++)
+            attacks |= (1ULL << (occupied_rank * 8 + file));
+
+        // Left
+        for (file = occupied_file - 1; file >= 1; file--)
+            attacks |= (1ULL << (occupied_rank * 8 + file));
+
+        // Up
+        for (rank = occupied_rank - 1; rank >= 1; rank--)
+            attacks |= (1ULL << (rank * 8 + occupied_file));
+
+        // Down
+        for (rank = occupied_rank + 1; rank <= 6; rank++)
+            attacks |= (1ULL << (rank * 8 + occupied_file));
+
+        return attacks;
+    }
+
   public:
     CBoard() {
         // Setup initial postion of pieces
@@ -162,7 +191,8 @@ class CBoard {
         // Initialize leaper attacks ie. pawns, knights
         init_leaper_attacks();
 
-        print_bitboard(mask_bishop_attacks(d5));
+        for (int i = 0; i < 64; i++)
+            print_bitboard(mask_rook_attacks(i));
     }
 
     /*****************************************************************
@@ -237,7 +267,8 @@ class CBoard {
                 if (get_bit(board, square) == 0)
                     std::cout << (get_bit(board, square)) << " | ";
                 else
-                    std::cout << "\033[1;33m" << (get_bit(board, square)) << "\033[0m | ";
+                    std::cout << "\033[1;33m" << (get_bit(board, square))
+                              << "\033[0m | ";
             }
             std::cout << "\n  ---------------------------------\n";
         }
