@@ -8,6 +8,8 @@
 #include <optional>
 #include <sys/types.h>
 
+#define count_bits(bitboard) __builtin_popcountll(bitboard);
+
 // Bitboard
 class CBoard {
     // Array of pieces defined in the order of the enum
