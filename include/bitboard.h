@@ -4,6 +4,7 @@
 #include <array>
 #include <cmath>
 #include <cstdint>
+#include <cstdio>
 #include <iostream>
 #include <optional>
 #include <sys/types.h>
@@ -264,6 +265,24 @@ class CBoard {
         return attacks;
     }
 
+    uint64_t set_occupancy(int index, int mask_bit_count,
+                           uint64_t attack_mask) {
+        // Occupancy map
+        uint64_t occupancy = 0ULL;
+
+        // Loop of range of bits in attack mask
+        for (int count = 0; count < mask_bit_count; count++) {
+            // Get lsb1 of attack mask
+            int square = get_ls1b_index(attack_mask);
+            // Pop lsb1 from attack mask
+            pop_bit(attack_mask, square);
+            if (index & (1ULL << count))
+                occupancy |= (1ULL << square);
+        }
+
+        return occupancy;
+    }
+
   public:
     CBoard() {
         // Setup initial postion of pieces
@@ -271,14 +290,18 @@ class CBoard {
         // Initialize leaper attacks ie. pawns, knights
         init_leaper_attacks();
 
-        uint64_t blockers = 0ULL;
-        set_bit(blockers, d1);
-        set_bit(blockers, g4);
-        set_bit(blockers, c4);
-        set_bit(blockers, b2);
-
-        print_bitboard(blockers);
-        std::cout << square_coordinate[get_ls1b_index(blockers)];
+        uint64_t attack_mask = mask_bishop_attacks(d4);
+        int bitcount = count_bits(attack_mask);
+        for (int i = 0; i < 4096; i++)
+        {
+            print_bitboard(set_occupancy(i, bitcount, attack_mask));
+            getchar();
+        }
+        // set_bit(blockers, d1);
+        // set_bit(blockers, g4);
+        // set_bit(blockers, c4);
+        // set_bit(blockers, b2);
+        // std::cout << square_coordinate[get_ls1b_index(blockers)];
     }
 
     /*****************************************************************
